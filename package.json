@@ -1,55 +1,28 @@
 {
-    "name": "karma-narrow-reporter",
-    "version": "0.0.1",
-    "private": true,
-    "description": "A Karma reporter. for narrow space",
-    "main": "index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/shiren/karma-narrow-reporter.git"
-    },
-    "keywords": [
-        "karma-plugin",
-        "reporter"
-    ],
-    "author": {
-        "name": "Sungho Kim(shiren)",
-        "email": "shirenbeat@gmail.com"
-    },
-    "dependencies": {
-        "colors": "~0.6.0"
-    },
-    "peerDependencies": {
-        "karma": ">=0.9"
-    },
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/shiren/karma-narrow-reporter/issues"
-    },
-    "gitHead": "",
-    "homepage": "https://github.com/shiren/karma-narrow-reporter",
-    "_id": "karma-narrow-reporter@0.0.1",
-    "_shasum": "",
-    "_from": "karma-narrow-reporter@0.0.1",
-    "_npmVersion": "1.4.28",
-    "_npmUser": {
-        "name": "shiren",
-        "email": "shirenbeat@gmail.com"
-    },
-    "maintainers": [
-        {
-            "name": "shiren",
-            "email": "shirenbeat@gmail.com"
-        }
-    ],
-    "dist": {
-        "shasum": "",
-        "tarball": ""
-    },
-    "directories": {},
-    "_resolved": "",
-    "readme": "ERROR: No README data found!"
+  "name": "karma-narrow-reporter",
+  "version": "1.0.0",
+  "description": "karma-narrow-reporter =====================",
+  "main": "index.js",
+  "dependencies": {
+    "colors": "^0.6.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shiren/karma-narrow-reporter.git"
+  },
+  "keywords": [
+    "Karma",
+    "plugin",
+    "reporter"
+  ],
+  "author": "\"Sungho Kim <shirenbeat@gmail.com> (http://shiren.github.io)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shiren/karma-narrow-reporter/issues"
+  },
+  "homepage": "https://github.com/shiren/karma-narrow-reporter#readme"
 }
