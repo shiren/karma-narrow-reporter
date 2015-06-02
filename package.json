@@ -1,7 +1,7 @@
 {
   "name": "karma-narrow-reporter",
   "version": "1.0.0",
-  "description": "karma-narrow-reporter =====================",
+  "description": "karma-narrow-reporter",
   "main": "index.js",
   "dependencies": {
     "colors": "^0.6.2"
@@ -15,9 +15,9 @@
     "url": "git+https://github.com/shiren/karma-narrow-reporter.git"
   },
   "keywords": [
-    "Karma",
-    "plugin",
-    "reporter"
+    "karma-plugin",
+    "karma-reporter",
+    "narrow"
   ],
   "author": "\"Sungho Kim <shirenbeat@gmail.com> (http://shiren.github.io)",
   "license": "MIT",
