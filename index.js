@@ -8,7 +8,7 @@ var NarrowReporter = function(baseReporterDecorator, formatError) {
     baseReporterDecorator(this);
 
     function writeSpecHeader(browser) {
-        self.write('\n' + browser + ' failed specs:\n'.red);
+        self.write(('--Failed in ' + browser + '--\n').red);
     }
 
     function writeSpecSuitePath(suite) {
@@ -75,6 +75,7 @@ var NarrowReporter = function(baseReporterDecorator, formatError) {
             writeSpecSuitePath(result.suite);
             writeSpecItDesc(result);
             writeSpecErrorLog(result.log);
+            this.write('\n');
         }
     };
 
