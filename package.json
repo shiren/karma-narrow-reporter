@@ -1,6 +1,6 @@
 {
   "name": "karma-narrow-reporter",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "karma-narrow-reporter",
   "main": "index.js",
   "dependencies": {

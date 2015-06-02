@@ -7,6 +7,7 @@ Reporter for narrow width space of screen
 
 * For narrow width space
 * List only failed specs
+* Optimized Stacktrace for browserify sourcemap
 
 Install this using npm:
 
