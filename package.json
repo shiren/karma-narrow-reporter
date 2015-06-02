@@ -19,7 +19,7 @@
     "karma-reporter",
     "narrow"
   ],
-  "author": "\"Sungho Kim <shirenbeat@gmail.com> (http://shiren.github.io)",
+  "author": "Sungho Kim <shirenbeat@gmail.com> (http://shiren.github.io)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/shiren/karma-narrow-reporter/issues"
