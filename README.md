@@ -1,22 +1,7 @@
-<br >
-
-# IM ON WORKING NOW
-
-<br >
-<br >
-<br >
-<br >
-<br >
-<br >
-<br >
-<br >
-
-
-
 karma-narrow-reporter
 =====================
 
-Reporter for narrow space of screen
+Reporter for narrow width space of screen
 
 Install this using npm:
 
