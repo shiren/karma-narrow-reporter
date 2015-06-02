@@ -3,7 +3,7 @@ karma-narrow-reporter
 
 Reporter for narrow width space of screen
 
-![2015-06-02 12 22 23](https://cloud.githubusercontent.com/assets/389021/7927935/1c00f7f2-0922-11e5-878b-d45495b81d2b.png)
+![2015-06-02 2 29 59](https://cloud.githubusercontent.com/assets/389021/7929011/fd115a46-0933-11e5-896e-d56a594ba7ea.png)
 
 * For narrow width space
 * List only failed specs
