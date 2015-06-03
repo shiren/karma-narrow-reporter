@@ -23,9 +23,8 @@ var NarrowReporter = function(baseReporterDecorator, formatError) {
 
     function writeSpecErrorLog(logs) {
         logs.forEach(function(log) {
-            var item = formatError(log).split('\n');
-            var errorDescription = item[0];
-            var stacktrace = item[1];
+            var parsedLog = logParsing(log),
+                stacktrace = parsedLog.stacktrace;
 
             //remove browserify virtual path
             if (stacktrace.indexOf(' <- ') !== -1) {
@@ -33,9 +32,34 @@ var NarrowReporter = function(baseReporterDecorator, formatError) {
                 stacktrace = ' at ' + stacktrace[stacktrace.length - 1];
             }
 
-            self.write((errorDescription + '\n').magenta);
+            self.write((parsedLog.assertion).white);
+            self.write((parsedLog.errorMsg).white);
             self.write((stacktrace + '\n').grey);
         });
+    }
+
+    function logParsing(log) {
+        var item, errorDescription, stacktrace, assertion, errorMsg;
+        var ErrorTypes = ['TypeError', 'ReferenceError:', 'RangeError:', 'SyntaxError:', 'URIError:', 'EvalError:', 'Error:'];
+
+        item = formatError(log).split('    at');
+        errorDescription = item[0];
+        assertion = item[0];
+        stacktrace = item[1];
+
+        ErrorTypes.forEach(function(error) {
+            if (errorDescription.indexOf(error) !== -1) {
+                errorDescription = errorDescription.split(error);
+                assertion = errorDescription[0];
+                errorMsg = error + errorDescription[1];
+            }
+        });
+
+        return {
+            assertion: assertion || '',
+            errorMsg: errorMsg || '',
+            stacktrace: stacktrace || ''
+        };
     }
 
     function writeTestResult(browsers) {
@@ -75,7 +99,6 @@ var NarrowReporter = function(baseReporterDecorator, formatError) {
             writeSpecSuitePath(result.suite);
             writeSpecItDesc(result);
             writeSpecErrorLog(result.log);
-            this.write('\n');
         }
     };
 
