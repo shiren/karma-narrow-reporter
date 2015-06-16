@@ -24,17 +24,24 @@ var NarrowReporter = function(baseReporterDecorator, formatError) {
     function writeSpecErrorLog(logs) {
         logs.forEach(function(log) {
             var parsedLog = logParsing(log),
-                stacktrace = parsedLog.stacktrace;
+                stacktraces = '';
 
             //remove browserify virtual path
-            if (stacktrace.indexOf(' <- ') !== -1) {
-                stacktrace = stacktrace.split(' <- ');
-                stacktrace = ' at ' + stacktrace[stacktrace.length - 1];
-            }
+            parsedLog.stacktrace.forEach(function(stline) {
+                if (stline.indexOf(' <- ') !== -1) {
+                    stline = stline.split(' <- ');
+                    stline = stline[stline.length - 1];
+                }
+
+                stacktraces += ' at ' + stline;
+            });
 
             self.write((parsedLog.assertion).white);
-            self.write((parsedLog.errorMsg).white);
-            self.write((stacktrace + '\n').grey);
+
+            if (parsedLog.errorMsg) {
+                self.write((JSON.stringify(parsedLog.errorMsg.replace(/\n$/g, '')).replace(/\"/g, '') + '\n').white);
+            }
+            self.write(stacktraces.grey);
         });
     }
 
@@ -43,9 +50,10 @@ var NarrowReporter = function(baseReporterDecorator, formatError) {
         var ErrorTypes = ['TypeError', 'ReferenceError:', 'RangeError:', 'SyntaxError:', 'URIError:', 'EvalError:', 'Error:'];
 
         item = formatError(log).split('    at');
-        errorDescription = item[0];
-        assertion = item[0];
-        stacktrace = item[1];
+
+        errorDescription = item.shift();
+        assertion = errorDescription;
+        stacktrace = item;
 
         ErrorTypes.forEach(function(error) {
             if (errorDescription.indexOf(error) !== -1) {
