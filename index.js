@@ -36,11 +36,11 @@ var NarrowReporter = function(baseReporterDecorator, formatError) {
                 stacktraces += ' at ' + stline;
             });
 
-            self.write((parsedLog.assertion).white);
-
             if (parsedLog.errorMsg) {
                 self.write((JSON.stringify(parsedLog.errorMsg.replace(/\n$/g, '')).replace(/\"/g, '') + '\n').white);
             }
+
+            self.write((parsedLog.assertion).white);
             self.write(stacktraces.grey);
         });
     }
