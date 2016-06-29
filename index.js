@@ -2,13 +2,23 @@
 
 require('colors');
 
-var NarrowReporter = function(baseReporterDecorator, formatError) {
+var NarrowReporter = function(baseReporterDecorator, formatError, config) {
     var self = this;
+    var browserLength, skipLog;
+
+    var nrConfig = Object.assign({
+        showSuccess: false,
+        stopOnFirstFail: false
+    }, config.narrowReporter);
 
     baseReporterDecorator(this);
 
-    function writeSpecHeader(browser) {
-        self.write(('--Failed in ' + browser + '--\n').red);
+    function writeSpecHeader(browser, isSuccess) {
+        if (isSuccess) {
+            self.write(('[O]').green);
+        } else {
+            self.write(('[X]').red);
+        }
     }
 
     function writeSpecSuitePath(suite) {
@@ -18,30 +28,24 @@ var NarrowReporter = function(baseReporterDecorator, formatError) {
     }
 
     function writeSpecItDesc(result) {
-        self.write(('"' + result.description + '"' + '\n').yellow);
+        self.write(('"' + result.description + '"').yellow);
     }
 
     function writeSpecErrorLog(logs) {
         logs.forEach(function(log) {
-            var parsedLog = logParsing(log),
-                stacktraces = '';
-
-            //remove browserify virtual path
-            parsedLog.stacktrace.forEach(function(stline) {
-                if (stline.indexOf(' <- ') !== -1) {
-                    stline = stline.split(' <- ');
-                    stline = stline[stline.length - 1];
-                }
-
-                stacktraces += ' at ' + stline;
-            });
+            var parsedLog = logParsing(log);
 
             if (parsedLog.errorMsg) {
-                self.write((JSON.stringify(parsedLog.errorMsg.replace(/\n$/g, '')).replace(/\"/g, '') + '\n').white);
+                self.write('\n' + (JSON.stringify(parsedLog.errorMsg.replace(/\n$/g, '')).replace(/\"/g, '')).white);
             }
 
-            self.write((parsedLog.assertion).white);
-            self.write(stacktraces.grey);
+            if (parsedLog.assertion) {
+                self.write('\n' + (parsedLog.assertion).white);
+            }
+
+            if (parsedLog.stacktrace) {
+                self.write('\n' + (parsedLog.stacktrace).grey);
+            }
         });
     }
 
@@ -49,11 +53,25 @@ var NarrowReporter = function(baseReporterDecorator, formatError) {
         var item, errorDescription, stacktrace, assertion, errorMsg;
         var ErrorTypes = ['TypeError', 'ReferenceError:', 'RangeError:', 'SyntaxError:', 'URIError:', 'EvalError:', 'Error:'];
 
-        item = formatError(log).split('    at');
+        item = formatError(log).split('\n');
 
         errorDescription = item.shift();
         assertion = errorDescription;
-        stacktrace = item;
+
+        stacktrace = '';
+
+        item.forEach(function(stLine) {
+            if (!stLine) {
+                return;
+            }
+
+            if (stLine.indexOf(' <- ') !== -1) {
+                stLine = stLine.split(' <- ');
+                stLine = stLine[stLine.length - 1];
+            }
+
+            stacktrace += ' @' + stLine + '\n';
+        });
 
         ErrorTypes.forEach(function(error) {
             if (errorDescription.indexOf(error) !== -1) {
@@ -66,15 +84,21 @@ var NarrowReporter = function(baseReporterDecorator, formatError) {
         return {
             assertion: assertion || '',
             errorMsg: errorMsg || '',
-            stacktrace: stacktrace || ''
+            stacktrace: stacktrace.replace(/\n$/g, '') || ''
         };
     }
+
 
     function writeTestResult(browsers) {
         browsers.forEach(function(browser) {
             var result = browser.lastResult;
+            var resultMsgIntro = '\n==> ';
 
-            self.write('==> ' + browser + ' ');
+            if (browsers.length > 1) {
+                resultMsgIntro += browser + ' ';
+            }
+
+            self.write(resultMsgIntro);
             self.write((result.success + '/' + (result.success + result.failed)).green);
 
             if (result.failed) {
@@ -82,7 +106,6 @@ var NarrowReporter = function(baseReporterDecorator, formatError) {
             }
 
             self.write(' ' + getDateWithFormat());
-            self.write('\n');
         });
     }
 
@@ -102,11 +125,25 @@ var NarrowReporter = function(baseReporterDecorator, formatError) {
     }
 
     this.onSpecComplete = function(browser, result) {
-        if (result.success === false) {
-            writeSpecHeader(browser);
+        if (skipLog) {
+            return;
+        }
+
+        if (!result.success) {
+            if (nrConfig.stopOnFirstFail) {
+                skipLog = true;
+            }
+
+            this.write('\n');
+            writeSpecHeader(browser, result.success);
             writeSpecSuitePath(result.suite);
             writeSpecItDesc(result);
             writeSpecErrorLog(result.log);
+        } else if(nrConfig.showSuccess && !result.skipped) {
+            this.write('\n');
+            writeSpecHeader(browser, result.success);
+            writeSpecSuitePath(result.suite);
+            writeSpecItDesc(result);
         }
     };
 
@@ -114,9 +151,30 @@ var NarrowReporter = function(baseReporterDecorator, formatError) {
         writeTestResult(browsers, results);
         this.write('\n');
     };
+
+    this.onBrowserStart = function(browser) {
+        this.write('\n...' + browser + ' start...\n');
+    };
+
+    this.onBrowserLog = function(browser, log, type) {
+        var blog = '\n[' + type.toUpperCase() + '] ';
+
+        if (browserLength > 1) {
+            blog +=  browser.name + ': ';
+        }
+
+        blog += log;
+
+        this.write(blog);
+    };
+
+    this.onRunStart = function(bc) {
+        skipLog = false;
+        browserLength = bc.length;
+    };
 };
 
-NarrowReporter.$inject = ['baseReporterDecorator', 'formatError'];
+NarrowReporter.$inject = ['baseReporterDecorator', 'formatError', 'config'];
 
 module.exports = {
     'reporter:narrow': ['type', NarrowReporter]
