@@ -4,7 +4,7 @@ require('colors');
 
 var NarrowReporter = function(baseReporterDecorator, formatError, config) {
     var self = this;
-    var browserLength, skipLog;
+    var browserLength, skipLogFlags, lastSuitePath;
 
     var nrConfig = Object.assign({
         showSuccess: false,
@@ -22,9 +22,16 @@ var NarrowReporter = function(baseReporterDecorator, formatError, config) {
     }
 
     function writeSpecSuitePath(suite) {
+        var suitePath = '';
+
         suite.forEach(function(value) {
-            self.write((value + ' >\n').blue.underline);
+            suitePath += value + ' >\n';
         });
+
+        if (lastSuitePath !== suitePath) {
+            self.write(suitePath.blue.underline);
+            lastSuitePath = suitePath;
+        }
     }
 
     function writeSpecItDesc(result) {
@@ -68,6 +75,8 @@ var NarrowReporter = function(baseReporterDecorator, formatError, config) {
             if (stLine.indexOf(' <- ') !== -1) {
                 stLine = stLine.split(' <- ');
                 stLine = stLine[stLine.length - 1];
+            } else {
+                stLine = stLine.replace(/^\s*at\s*/g, '');
             }
 
             stacktrace += ' @' + stLine + '\n';
@@ -92,10 +101,10 @@ var NarrowReporter = function(baseReporterDecorator, formatError, config) {
     function writeTestResult(browsers) {
         browsers.forEach(function(browser) {
             var result = browser.lastResult;
-            var resultMsgIntro = '\n==> ';
+            var resultMsgIntro = '\n\n==> END: ';
 
-            if (browsers.length > 1) {
-                resultMsgIntro += browser + ' ';
+            if (browserLength > 1) {
+                resultMsgIntro += browser.name + ' ';
             }
 
             self.write(resultMsgIntro);
@@ -125,24 +134,24 @@ var NarrowReporter = function(baseReporterDecorator, formatError, config) {
     }
 
     this.onSpecComplete = function(browser, result) {
-        if (skipLog) {
+        if (skipLogFlags[browser.id]) {
             return;
         }
 
         if (!result.success) {
             if (nrConfig.stopOnFirstFail) {
-                skipLog = true;
+                skipLogFlags[browser.id] = true;
             }
 
             this.write('\n');
-            writeSpecHeader(browser, result.success);
             writeSpecSuitePath(result.suite);
+            writeSpecHeader(browser, result.success);
             writeSpecItDesc(result);
             writeSpecErrorLog(result.log);
         } else if(nrConfig.showSuccess && !result.skipped) {
             this.write('\n');
-            writeSpecHeader(browser, result.success);
             writeSpecSuitePath(result.suite);
+            writeSpecHeader(browser, result.success);
             writeSpecItDesc(result);
         }
     };
@@ -153,7 +162,7 @@ var NarrowReporter = function(baseReporterDecorator, formatError, config) {
     };
 
     this.onBrowserStart = function(browser) {
-        this.write('\n...' + browser + ' start...\n');
+        this.write(('\n==> START: ' + browser + '\n').underline);
     };
 
     this.onBrowserLog = function(browser, log, type) {
@@ -169,7 +178,8 @@ var NarrowReporter = function(baseReporterDecorator, formatError, config) {
     };
 
     this.onRunStart = function(bc) {
-        skipLog = false;
+        skipLogFlags = [];
+        lastSuitePath = null;
         browserLength = bc.length;
     };
 };

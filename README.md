@@ -3,19 +3,33 @@ karma-narrow-reporter
 
 Reporter for narrow width space of screen
 
-![2015-06-03 3 46 35](https://cloud.githubusercontent.com/assets/389021/7954212/55b77dc2-0a08-11e5-8de8-5325d8b5f6d3.png)
+![2016-08-05 2 32 30](https://cloud.githubusercontent.com/assets/389021/17427254/0ff51df8-5b1a-11e6-89a8-49917fc3c8d9.png)
 
 * For narrow width space
 * List only failed specs
-* Optimized Stacktrace for browserify sourcemap
+* Optimized Stacktrace for sourcemap
 
-Install this using npm:
+### Install this using npm:
 
     npm install karma-narrow-reporter
 
-Include this specrunner in your `karma.conf.js` like so:
+### Include this specrunner in your `karma.conf.js` like so:
 
     reporters: ['narrow'],
+
+### Options
+
+
+``` javascript
+
+narrowReporter: {
+    showSuccess: true, //Show success testcase, default is false
+    stopOnFirstFail : true //Stop running testcase when you failed any testcase, default is false
+},
+
+```
+
+
 
 License
 -------
