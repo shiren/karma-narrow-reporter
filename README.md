@@ -6,7 +6,6 @@ Reporter for narrow width space of screen
 ![2016-08-05 2 32 30](https://cloud.githubusercontent.com/assets/389021/17427254/0ff51df8-5b1a-11e6-89a8-49917fc3c8d9.png)
 
 * For narrow width space
-* Optimized Stacktrace for sourcemap
 * List only failed specs (you can see success specs by option)
 * Stop running specs if you failed any spec(by option)
 

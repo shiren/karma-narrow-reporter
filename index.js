@@ -65,22 +65,7 @@ var NarrowReporter = function(baseReporterDecorator, formatError, config) {
         errorDescription = item.shift();
         assertion = errorDescription;
 
-        stacktrace = '';
-
-        item.forEach(function(stLine) {
-            if (!stLine) {
-                return;
-            }
-
-            if (stLine.indexOf(' <- ') !== -1) {
-                stLine = stLine.split(' <- ');
-                stLine = stLine[stLine.length - 1];
-            } else {
-                stLine = stLine.replace(/^\s*at\s*/g, '');
-            }
-
-            stacktrace += ' @' + stLine + '\n';
-        });
+        stacktrace = item.join('\n');
 
         ErrorTypes.forEach(function(error) {
             if (errorDescription.indexOf(error) !== -1) {
